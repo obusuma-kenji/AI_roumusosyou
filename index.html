@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <!-- Chosen Palette: Warm Professional Slate & Indigo with Emerald/Amber Accents -->
+  <!-- Application Structure Plan: 
+       1. Header & Navigation: Clean top navbar with tab switching (Dashboard, Vulnerabilities, Prevention System, Incident Response, Self-Audit Checklist).
+       2. Section 1 (Executive Dashboard): Overview of the AI litigation threat landscape, key comparison metrics (Chart.js canvas), and fundamental shift in labor disputes.
+       3. Section 2 (3 Vulnerabilities & Attack Vectors): Interactive card explorer detailing how AI targets contract loopholes, lack of evidence, and emotional remarks.
+       4. Section 3 (Daily Prevention Framework): Step-by-step interactive strategy for institutional defense, daily report evidence traps, and meeting minutes protocols.
+       5. Section 4 (Signs & Escalation Protocol): Interactive decision chart comparing dangerous escalation vs safe acceptance paths.
+       6. Section 5 (Incident Response & Counter-Strategy): Actionable playbook for handling incoming AI notices/lawsuits, exploiting AI weaknesses, and preventing chain reactions.
+       7. Section 6 (Interactive Defense Readiness Audit): Dynamic self-assessment tool with automated risk score calculation, actionable recommendations, and export options.
+       Why this structure: It transitions the user from understanding the core structural shift of AI litigation to analyzing specific vulnerabilities, implementing daily field practices, and evaluating their own company's defense readiness in real time.
+  -->
+  <!-- Visualization & Content Choices:
+       - Chart.js Canvas for AI dispute metric comparisons (Time, Cost, Quality, Volume).
+       - Interactive HTML/CSS Tailwind cards and toggles for Before/After comparisons and threat vectors.
+       - Interactive JavaScript Stepper/Flowchart for Escalation vs Safe Paths.
+       - Dynamic JavaScript scoring system for Defense Audit Checklist.
+       - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+  -->
+  <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI武装社員・本人訴訟 徹底予防＆防衛戦略ポータル</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f3ff',
+              100: '#e0e7ff',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-feature-settings: "palt"; }
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 650px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 320px;
+      max-height: 400px;
+    }
+    @media (min-width: 768px) {
+      .chart-container { height: 360px; }
+    }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans selection:bg-indigo-100 selection:text-indigo-900">
+
+  <!-- Main Navigation Header -->
+  <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-rose-500 flex items-center justify-center text-white shadow-md">
+            <i class="fa-solid fa-shield-cat text-xl"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h1 class="text-base sm:text-lg font-bold text-white tracking-tight">AI武装労働者・本人訴訟 予防＆防衛ポータル</h1>
+              <span class="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-semibold border border-rose-500/30">対AI労働紛争 実務規格</span>
+            </div>
+            <p class="text-[11px] text-slate-400 hidden sm:block">生成AI時代の労働審判・内容証明・本人訴訟に対する構造的防御マニュアル</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="scrollToSection('sec-audit')" class="px-3 py-1.5 text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-all flex items-center space-x-1.5 shadow-sm">
+            <i class="fa-solid fa-clipboard-check"></i>
+            <span class="hidden sm:inline">自社防衛診断</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Secondary Navigation Tabs -->
+  <div class="bg-white border-b border-slate-200 sticky top-16 z-30 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-auto custom-scrollbar">
+      <nav class="flex space-x-6 min-w-max py-1" aria-label="Tabs">
+        <button id="tab-overview" onclick="switchMainTab('overview')" class="tab-btn py-3 px-1 border-b-2 font-bold text-xs sm:text-sm flex items-center space-x-2 border-indigo-600 text-indigo-600">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>1. AI脅威構造と変容</span>
+        </button>
+        <button id="tab-vulnerabilities" onclick="switchMainTab('vulnerabilities')" class="tab-btn py-3 px-1 border-b-2 font-medium text-xs sm:text-sm flex items-center space-x-2 border-transparent text-slate-500 hover:text-slate-800">
+          <i class="fa-solid fa-crosshairs"></i>
+          <span>2. AIが突く3大急所</span>
+        </button>
+        <button id="tab-prevention" onclick="switchMainTab('prevention')" class="tab-btn py-3 px-1 border-b-2 font-medium text-xs sm:text-sm flex items-center space-x-2 border-transparent text-slate-500 hover:text-slate-800">
+          <i class="fa-solid fa-layer-group"></i>
+          <span>3. 日常の予防3層防御</span>
+        </button>
+        <button id="tab-escalation" onclick="switchMainTab('escalation')" class="tab-btn py-3 px-1 border-b-2 font-medium text-xs sm:text-sm flex items-center space-x-2 border-transparent text-slate-500 hover:text-slate-800">
+          <i class="fa-solid fa-route"></i>
+          <span>4. 兆候時の分岐フロー</span>
+        </button>
+        <button id="tab-response" onclick="switchMainTab('response')" class="tab-btn py-3 px-1 border-b-2 font-medium text-xs sm:text-sm flex items-center space-x-2 border-transparent text-slate-500 hover:text-slate-800">
+          <i class="fa-solid fa-gavel"></i>
+          <span>5. 有事発生時の反撃法</span>
+        </button>
+        <button id="tab-audit" onclick="switchMainTab('audit')" class="tab-btn py-3 px-1 border-b-2 font-medium text-xs sm:text-sm flex items-center space-x-2 border-transparent text-slate-500 hover:text-slate-800">
+          <i class="fa-solid fa-list-check"></i>
+          <span>6. 自社防衛チェック</span>
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Main Content Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
+
+    <!-- SECTION 1: OVERVIEW & Threat Landscape -->
+    <section id="pane-overview" class="tab-pane space-y-6">
+      <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+        <div class="max-w-3xl">
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-semibold mb-3">
+            <i class="fa-solid fa-bolt"></i>
+            <span>労働紛争のコペルニクス的転換</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-3">なぜ「AI武装社員」による本人訴訟・労働審判が激増するのか？</h2>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            従来の労働紛争において、労働者側の最大障壁は「法的知識の欠如」と「高額な弁護士費用（着手金30万円〜）」でした。しかし生成AIの登場により、月額数千円のツールで弁護士顔負けの「労働審判申立書」「内容証明郵便」「訴状」が数分で作成可能になりました。「面倒だから諦める」「費用倒れになるから泣き寝入りする」という企業の従来の前提は完全に崩壊しています。
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-8 items-center">
+          <div class="lg:col-span-7 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+            <h3 class="text-sm font-bold text-slate-800 mb-1 flex items-center space-x-2">
+              <i class="fa-solid fa-chart-column text-indigo-600"></i>
+              <span>従来型労働紛争 vs AI武装・本人訴訟の構造比較</span>
+            </h3>
+            <p class="text-xs text-slate-500 mb-4">AIにより労働者側の「参入障壁」が激減し、訴訟リスクの発生頻度が構造的に急増しています。</p>
+            <div class="chart-container">
+              <canvas id="chart-dispute-comparison"></canvas>
+            </div>
+          </div>
+
+          <div class="lg:col-span-5 space-y-4">
+            <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl space-y-2">
+              <div class="flex items-center space-x-2 text-rose-900 font-bold text-xs sm:text-sm">
+                <i class="fa-solid fa-triangle-exclamation text-rose-600 text-base"></i>
+                <span>企業側が陥る危険な誤解</span>
+              </div>
+              <p class="text-xs text-rose-800 leading-relaxed">
+                「素人がネットで調べた文書など裁判所で通用しない」という高く括った対応は命取りになります。AIは過去の裁判例や労基法条文を正確に引用し、完璧な形式論理を組み立てます。裁判官や労働審判員も、書面の形式が整っていれば審理を進めざるを得ません。
+              </p>
+            </div>
+
+            <div class="p-4 bg-indigo-50 border border-indigo-200 rounded-xl space-y-2">
+              <div class="flex items-center space-x-2 text-indigo-900 font-bold text-xs sm:text-sm">
+                <i class="fa-solid fa-shield-halved text-indigo-600 text-base"></i>
+                <span>企業側の唯一の勝機と防御軸</span>
+              </div>
+              <p class="text-xs text-indigo-800 leading-relaxed">
+                AIが得意なのは「一般論・法律論の構築」であり、**「自社固有の客観的ファクト（日々の指導記録、合意メール、タイムカード）」を捏造することはできません**。企業側の防衛戦略は、AIが太刀打ちできない「客観的証拠の時系列積み上げ」へと全面的にシフトする必要があります。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: 3 Vulnerabilities -->
+    <section id="pane-vulnerabilities" class="tab-pane hidden space-y-6">
+      <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+        <div class="max-w-3xl mb-6">
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold mb-2">
+            <i class="fa-solid fa-bullseye"></i>
+            <span>攻撃の起点を封殺する</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">AI武装社員が突いてくる「3大急所」と構造</h2>
+          <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+            AIは「制度の文言の不備」と「形式的な指導証拠の欠如」を検索し、論理的隙間を突く作業が極めて得意です。攻撃の起点となる3つの攻撃ベクトルと、それに対する防御ロジックを理解してください。
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Card 1 -->
+          <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 flex flex-col justify-between hover:border-indigo-300 transition-all">
+            <div class="space-y-3">
+              <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 font-black text-sm flex items-center justify-center">01</div>
+              <h3 class="text-sm font-bold text-slate-900">就業規則・雇用契約の「文言の粗」</h3>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                固定残業代（定額残業）の区分不備、明確な何時間分の明示欠如、休職・復職規定の曖昧さ、懲戒事由の定型不足。
+              </p>
+              <div class="p-3 bg-white rounded-xl border border-slate-200 text-[11px] text-slate-700 space-y-1">
+                <span class="font-bold text-rose-600 block"><i class="fa-solid fa-bug mr-1"></i>AIの攻撃パターン:</span>
+                給与明細と就業規則のテキストをAIに読み込ませ、「固定残業代の無効主張」と「過去2年分の未払い残業代請求書」を一瞬で自動生成します。
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-200 flex items-center text-xs font-semibold text-indigo-600">
+              <span>対策: 賃金規程・固定残業明記の再厳格化</span>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 flex flex-col justify-between hover:border-indigo-300 transition-all">
+            <div class="space-y-3">
+              <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-800 font-black text-sm flex items-center justify-center">02</div>
+              <h3 class="text-sm font-bold text-slate-900">「指導の客観的証拠」がないことの悪用</h3>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                会社側が日常の注意・指導を口頭や「了解」の一言で済ませている場合、AIは完璧な被害者論理を構築します。
+              </p>
+              <div class="p-3 bg-white rounded-xl border border-slate-200 text-[11px] text-slate-700 space-y-1">
+                <span class="font-bold text-rose-600 block"><i class="fa-solid fa-bug mr-1"></i>AIの攻撃パターン:</span>
+                「会社は何ら具体的な改善指導を行わず、突然不当な退職勧奨・懲戒処分を下した」という、完璧に整合した申立書を作成します。
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-200 flex items-center text-xs font-semibold text-indigo-600">
+              <span>対策: 日報の現実認識装置化 & 即日合意メール</span>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 flex flex-col justify-between hover:border-indigo-300 transition-all">
+            <div class="space-y-3">
+              <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-800 font-black text-sm flex items-center justify-center">03</div>
+              <h3 class="text-sm font-bold text-slate-900">上司の「感情的な言動」のパワハラ化</h3>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                チャット（Slack/LINE）での叱責の断片や、口頭での「いつもお前は」「やる気がないなら辞めろ」という発言。
+              </p>
+              <div class="p-3 bg-white rounded-xl border border-slate-200 text-[11px] text-slate-700 space-y-1">
+                <span class="font-bold text-rose-600 block"><i class="fa-solid fa-bug mr-1"></i>AIの攻撃パターン:</span>
+                一部の言動フレーズを取り込み、安全配慮義務違反・不法行為に基づく高額な「精神的慰謝料請求書」に仕立て上げます。
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-200 flex items-center text-xs font-semibold text-indigo-600">
+              <span>対策: 感情排斥＆指導文のAI伴走トーン化</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: DAILY PREVENTION FRAMEWORK -->
+    <section id="pane-prevention" class="tab-pane hidden space-y-6">
+      <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+        <div class="max-w-3xl mb-6">
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold mb-2">
+            <i class="fa-solid fa-shield-heart"></i>
+            <span>足場を奪う事前防御</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">日常の予防策（3層の防衛シールド）</h2>
+          <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+            トラブルが発生してから弁護士に依頼しても、過去の証拠がゼロであれば敗訴や高額な解決金の支払いを余儀なくされます。日常の業務フローの中に「自動的に証拠が溜まる仕組み」を組み込みます。
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <!-- Layer 1 -->
+          <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+            <div class="flex items-center space-x-3">
+              <span class="px-2.5 py-1 bg-indigo-600 text-white font-bold text-xs rounded-lg">第1層</span>
+              <h3 class="text-base font-bold text-slate-900">制度の「漏れ」の総点検（隙を作らない）</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-700">
+              <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2">
+                <span class="font-bold text-indigo-900 block text-sm">固定残業代（定額残業代）の厳密化</span>
+                <p class="leading-relaxed">基本給と固定残業手当の金額的明確区分、想定時間数（例: 45時間分）の明示、超過分の差額精算条項を再確認。就業規則と雇用契約書、給与明細の記載が完全に一致していることが不可欠です。</p>
+              </div>
+              <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2">
+                <span class="font-bold text-indigo-900 block text-sm">試用期間・休職復職規定のアップデート</span>
+                <p class="leading-relaxed">メンタル不調による休職期間満了時の自然退職規定や、リワーク（試し勤務）の条件、本採用拒否の評価項目を明確化。曖昧な運用はAIに「不当解雇」の論拠を与えます。</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Layer 2 -->
+          <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+            <div class="flex items-center space-x-3">
+              <span class="px-2.5 py-1 bg-emerald-600 text-white font-bold text-xs rounded-lg">第2層</span>
+              <h3 class="text-base font-bold text-slate-900">指導プロセスの「量」と「質」の証拠化</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-700">
+              <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2">
+                <span class="font-bold text-emerald-900 block text-sm">日報を「現実認識装置」にする</span>
+                <p class="leading-relaxed">業務実績、時間の使い方、課題を毎日文字で提出させる。上司の返信は「了解」で終わらせず、**「①事実の指摘 ＋ ②深掘りの問い ＋ ③次のアクション」**の型で返します。本人に自己客観視させ、「自分は悪くない、会社のせいだ」という自己正当化を防ぎます。</p>
+              </div>
+              <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2">
+                <span class="font-bold text-emerald-900 block text-sm">面談議事録の即日メール送信（6項目の型）</span>
+                <p class="leading-relaxed">面談後、その日のうちに「①基本情報 ②共有した事実 ③本人の言い分 ④指導内容 ⑤アクションプラン ⑥返信期限」をメール本文に記載して送信。「事実と異なる点があれば◯日以内に返信してください」と期限を切ることで、後からの言った・言わないを封殺します。</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Layer 3 -->
+          <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+            <div class="flex items-center space-x-3">
+              <span class="px-2.5 py-1 bg-amber-600 text-white font-bold text-xs rounded-lg">第3層</span>
+              <h3 class="text-base font-bold text-slate-900">感情的叱責の完全排除（上司側のガード）</h3>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-slate-200 text-xs text-slate-700 space-y-2">
+              <p class="leading-relaxed">
+                人格否定（「人間として失格」「親の顔が見たい」）、過度な一般化（「いつもお前は」「絶対に無理」）、感情的な大声や暴言を徹底的に組織から排除します。上司自身の指導文作成にAI（伴走型トーン生成）を活用させ、冷静で論理的なテキストコミュニケーションを徹底させます。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: ESCALATION PROTOCOL -->
+    <section id="pane-escalation" class="tab-pane hidden space-y-6">
+      <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+        <div class="max-w-3xl mb-6">
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold mb-2">
+            <i class="fa-solid fa-code-branch"></i>
+            <span>第三者介入の阻止</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">トラブル兆候時の対応プロセスの分岐</h2>
+          <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+            指導に従わない社員や能力不足の社員に対し、**「指導のプロセスを飛ばしていきなり人事措置（降格・退職勧奨・解雇）に進む」ことは厳禁**です。下図のルートの違いが結末を分けます。
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Dangerous Route -->
+          <div class="p-6 bg-rose-50/70 rounded-2xl border border-rose-200 space-y-4">
+            <div class="flex items-center justify-between border-b border-rose-200 pb-3">
+              <h3 class="font-bold text-rose-900 text-sm flex items-center space-x-2">
+                <i class="fa-solid fa-fire text-rose-600"></i>
+                <span>危険なルート（紛争・炎上パターン）</span>
+              </h3>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-rose-200 text-rose-900 font-bold">NG運用</span>
+            </div>
+            <div class="space-y-3 text-xs text-rose-950">
+              <div class="p-3 bg-white/80 rounded-xl border border-rose-200">
+                <span class="font-bold block">1. 会社の不満蓄積</span>
+                <p class="text-[11px] text-slate-600 mt-0.5">現場上司が口頭で注意するのみで、具体的な記録や客観的数値が残っていない。</p>
+              </div>
+              <div class="text-center text-rose-500"><i class="fa-solid fa-arrow-down"></i></div>
+              <div class="p-3 bg-white/80 rounded-xl border border-rose-200">
+                <span class="font-bold block">2. いきなり退職勧奨・降格処分</span>
+                <p class="text-[11px] text-slate-600 mt-0.5">改善の機会を与えず、突然「明日から来なくていい」「役職を外す」と告げる。</p>
+              </div>
+              <div class="text-center text-rose-500"><i class="fa-solid fa-arrow-down"></i></div>
+              <div class="p-3 bg-white/80 rounded-xl border border-rose-200">
+                <span class="font-bold block">3. 社員の激しい防御反応 ＋ AI投入</span>
+                <p class="text-[11px] text-slate-600 mt-0.5">納得できない社員がAIツールを使い、数分で「不当退職勧奨に対する通知書」を作成。</p>
+              </div>
+              <div class="text-center text-rose-500"><i class="fa-solid fa-arrow-down"></i></div>
+              <div class="p-3 bg-rose-600 text-white rounded-xl shadow-xs">
+                <span class="font-bold block">結末: 労働審判・あっせん・訴訟への突入</span>
+                <p class="text-[11px] text-rose-100 mt-0.5">会社側は指導記録がなく、高額な解決金支払いまたは復職を受け入れる事態に。</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Safe Route -->
+          <div class="p-6 bg-emerald-50/70 rounded-2xl border border-emerald-200 space-y-4">
+            <div class="flex items-center justify-between border-b border-emerald-200 pb-3">
+              <h3 class="font-bold text-emerald-900 text-sm flex items-center space-x-2">
+                <i class="fa-solid fa-shield-check text-emerald-600"></i>
+                <span>安全なルート（受容・防衛パターン）</span>
+              </h3>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-200 text-emerald-900 font-bold">推奨運用</span>
+            </div>
+            <div class="space-y-3 text-xs text-emerald-950">
+              <div class="p-3 bg-white/80 rounded-xl border border-emerald-200">
+                <span class="font-bold block">1. 日報・面談の積み重ね</span>
+                <p class="text-[11px] text-slate-600 mt-0.5">毎日の日報と、6項目の型に沿った面談確認メールを時系列で蓄積。</p>
+              </div>
+              <div class="text-center text-emerald-500"><i class="fa-solid fa-arrow-down"></i></div>
+              <div class="p-3 bg-white/80 rounded-xl border border-emerald-200">
+                <span class="font-bold block">2. 本人の弁明を議事録に「ありのまま」残す</span>
+                <p class="text-[11px] text-slate-600 mt-0.5">言い分を否定せず正確に記録。後から異なる主張をした際の「変遷の証明」にする。</p>
+              </div>
+              <div class="text-center text-emerald-500"><i class="fa-solid fa-arrow-down"></i></div>
+              <div class="p-3 bg-white/80 rounded-xl border border-emerald-200">
+                <span class="font-bold block">3. 客観的現実認識の定着</span>
+                <p class="text-[11px] text-slate-600 mt-0.5">「会社は繰り返し機会を与えてくれた」と本人が認識し、他責思考が減退。</p>
+              </div>
+              <div class="text-center text-emerald-500"><i class="fa-solid fa-arrow-down"></i></div>
+              <div class="p-3 bg-emerald-700 text-white rounded-xl shadow-xs">
+                <span class="font-bold block">結末: 円満な合意退職・適正配置転換</span>
+                <p class="text-[11px] text-emerald-100 mt-0.5">第三者が介入しても会社側の正当性が明白であり、紛争化が未然に回避される。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: INCIDENT RESPONSE -->
+    <section id="pane-response" class="tab-pane hidden space-y-6">
+      <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+        <div class="max-w-3xl mb-6">
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-900 text-white text-xs font-semibold mb-2">
+            <i class="fa-solid fa-gavel"></i>
+            <span>有事の反撃ロジック</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">AIによる請求・本人訴訟が起きてしまった場合の鉄則</h2>
+          <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+            万が一、AIが作成した内容証明や労働審判申立書が届いた場合でも焦る必要はありません。AI生成文書特有の弱点を突くことで、相手の戦意を早期に喪失させることができます。
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Iron Rule 1 -->
+          <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+            <div class="flex items-center space-x-2 text-rose-600 font-bold text-sm">
+              <span class="w-7 h-7 rounded-lg bg-rose-100 text-rose-700 font-black text-xs flex items-center justify-center">1</span>
+              <span>【最重要】安易な金銭解決（示談金）を絶対にしない</span>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              「少額だから」「面倒だから」と数十万円の解決金を払って早期幕引きを図ると、社内やSNS・転職口コミサイトに**「あの会社はAIで請求書を送れば金を払う」**という噂が広まり、他の社員や退職者からの連鎖請求を招きます。会社の対応に落ち度がない場合は、毅然と支払いを拒否する姿勢が最大の抑止力になります。
+            </p>
+          </div>
+
+          <!-- Iron Rule 2 -->
+          <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+            <div class="flex items-center space-x-2 text-indigo-600 font-bold text-sm">
+              <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 font-black text-xs flex items-center justify-center">2</span>
+              <span>AI文書特有の「弱点（ファクトのスカスカ）」を突く</span>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              AIが作成した書面は判例や条文の引用が巧みですが、**「会社固有の具体的ファクト」が欠落しているか、誇張・事実誤認（ハルシネーション）が混ざっています**。相手の美辞麗句に対し、会社側は淡々と「日報のコピー」「合意済みの面談メール」「タイムカード」の客観証拠を突きつけます。相手や支援弁護士は勝目がないことを悟り、請求を取り下げます。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: INTERACTIVE SELF-AUDIT CHECKLIST -->
+    <section id="pane-audit" class="tab-pane hidden space-y-6">
+      <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+          <div>
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold mb-2">
+              <i class="fa-solid fa-list-check"></i>
+              <span>リアルタイムスコアリング</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">自社防衛体制 インタラクティブ・チェックリスト</h2>
+            <p class="text-xs text-slate-500 mt-1">自社の対応状況にチェックを入れて、AI武装労働者に対する防衛スコアを算出してください。</p>
+          </div>
+
+          <!-- Score Card -->
+          <div class="bg-slate-900 text-white p-4 rounded-2xl flex items-center space-x-4 shrink-0 shadow-md">
+            <div class="text-center">
+              <span class="text-[10px] text-slate-400 block font-semibold uppercase">Defense Score</span>
+              <span id="audit-score" class="text-3xl font-black text-emerald-400">0</span>
+              <span class="text-xs text-slate-400"> / 100点</span>
+            </div>
+            <div class="border-l border-slate-700 pl-4 space-y-1">
+              <span id="audit-rank" class="text-xs font-bold px-2.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 inline-block">危険（無防備）</span>
+              <p id="audit-advice" class="text-[11px] text-slate-300 max-w-[180px]">早急な就業規則の点検と指導記録のログ化が必要です。</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Checklist Categories -->
+        <div class="space-y-6 mt-6">
+
+          <!-- Category A -->
+          <div class="space-y-3">
+            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center space-x-2">
+              <i class="fa-solid fa-file-contract text-indigo-600"></i>
+              <span>A. 制度面（就業規則・契約の厳格性）- 各15点</span>
+            </h3>
+            <div class="space-y-2">
+              <label class="flex items-start space-x-3 p-3.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 cursor-pointer transition-all">
+                <input type="checkbox" class="audit-check mt-0.5 w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500" data-score="15" onchange="calculateAuditScore()">
+                <div class="text-xs text-slate-800">
+                  <span class="font-bold block text-slate-900 mb-0.5">就業規則・賃金規程・雇用契約書が最新の法改正および最新判例に適合している</span>
+                  <span class="text-slate-500">（特に固定残業代の明確区分、時間数明示、精算ルールが明記されているか）</span>
+                </div>
+              </label>
+
+              <label class="flex items-start space-x-3 p-3.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 cursor-pointer transition-all">
+                <input type="checkbox" class="audit-check mt-0.5 w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500" data-score="15" onchange="calculateAuditScore()">
+                <div class="text-xs text-slate-800">
+                  <span class="font-bold block text-slate-900 mb-0.5">休職・復職・試用期間の条件が客観的数値・基準で明文化されている</span>
+                  <span class="text-slate-500">（メンタル不調の自然退職規定や、本採用拒否基準が具体化されているか）</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Category B -->
+          <div class="space-y-3">
+            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center space-x-2">
+              <i class="fa-solid fa-user-check text-emerald-600"></i>
+              <span>B. 現場面（指導プロセスの客観証拠化）- 各20点</span>
+            </h3>
+            <div class="space-y-2">
+              <label class="flex items-start space-x-3 p-3.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 cursor-pointer transition-all">
+                <input type="checkbox" class="audit-check mt-0.5 w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500" data-score="20" onchange="calculateAuditScore()">
+                <div class="text-xs text-slate-800">
+                  <span class="font-bold block text-slate-900 mb-0.5">部下の日報に対し、上司が「事実の指摘＋深掘りの問い」で返信している</span>
+                  <span class="text-slate-500">（単なる「了解」「頑張って」の一言返信を組織的に禁止・指導しているか）</span>
+                </div>
+              </label>
+
+              <label class="flex items-start space-x-3 p-3.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 cursor-pointer transition-all">
+                <input type="checkbox" class="audit-check mt-0.5 w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500" data-score="20" onchange="calculateAuditScore()">
+                <div class="text-xs text-slate-800">
+                  <span class="font-bold block text-slate-900 mb-0.5">個別指導・面談の際、当日のうちに「6項目の型」で確認メールを送信している</span>
+                  <span class="text-slate-500">（返信期限を切り、「合意形成の証拠」をメール本文で確定させているか）</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Category C -->
+          <div class="space-y-3">
+            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center space-x-2">
+              <i class="fa-solid fa-box-archive text-amber-600"></i>
+              <span>C. 管理・連携面（ログの一元管理と専門家連携）- 各15点/15点/10点</span>
+            </h3>
+            <div class="space-y-2">
+              <label class="flex items-start space-x-3 p-3.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 cursor-pointer transition-all">
+                <input type="checkbox" class="audit-check mt-0.5 w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500" data-score="15" onchange="calculateAuditScore()">
+                <div class="text-xs text-slate-800">
+                  <span class="font-bold block text-slate-900 mb-0.5">指導記録や面談ログが時系列で改ざんできない形で一元蓄積されている</span>
+                  <span class="text-slate-500">（万が一の紛争時に、タイムスタンプ付きで裁判所等へ即座に提出できるか）</span>
+                </div>
+              </label>
+
+              <label class="flex items-start space-x-3 p-3.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 cursor-pointer transition-all">
+                <input type="checkbox" class="audit-check mt-0.5 w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500" data-score="15" onchange="calculateAuditScore()">
+                <div class="text-xs text-slate-800">
+                  <span class="font-bold block text-slate-900 mb-0.5">感情的・パワハラ的言動（人格否定・大声）を組織として禁止徹底している</span>
+                  <span class="text-slate-500">（上司のテキストコミュニケーションの質を管理職研修等で担保しているか）</span>
+                </div>
+              </label>
+
+              <label class="flex items-start space-x-3 p-3.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 cursor-pointer transition-all">
+                <input type="checkbox" class="audit-check mt-0.5 w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500" data-score="10" onchange="calculateAuditScore()">
+                <div class="text-xs text-slate-800">
+                  <span class="font-bold block text-slate-900 mb-0.5">トラブル初期段階で顧問社労士・弁護士に時系列ログを即時共有できる</span>
+                  <span class="text-slate-500">（手遅れになる前に専門家の法的な指導・文面監修を受けられる体制があるか）</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 border-t border-slate-800 text-slate-400 py-6 text-xs text-center">
+    <div class="max-w-7xl mx-auto px-4">
+      <p>AI武装労働者・本人訴訟 予防＆防衛実務ポータル &copy; 2026</p>
+      <p class="text-[11px] text-slate-500 mt-1">※本システムは労務紛争予防のための実務フレームワークです。個別紛争の具体的な法的判断は顧問弁護士・社労士にご相談ください。</p>
+    </div>
+  </footer>
+
+  <!-- Inline Application Logic JavaScript -->
+  <script>
+    // Tab Switching Logic
+    function switchMainTab(tabKey) {
+      const tabs = ['overview', 'vulnerabilities', 'prevention', 'escalation', 'response', 'audit'];
+      tabs.forEach(t => {
+        const pane = document.getElementById(`pane-${t}`);
+        const btn = document.getElementById(`tab-${t}`);
+        if (t === tabKey) {
+          pane.classList.remove('hidden');
+          btn.classList.remove('border-transparent', 'text-slate-500');
+          btn.classList.add('border-indigo-600', 'text-indigo-600');
+        } else {
+          pane.classList.add('hidden');
+          btn.classList.add('border-transparent', 'text-slate-500');
+          btn.classList.remove('border-indigo-600', 'text-indigo-600');
+        }
+      });
+    }
+
+    function scrollToSection(sectionId) {
+      switchMainTab('audit');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Chart.js Setup for Dispute Comparison
+    let comparisonChart = null;
+
+    function initComparisonChart() {
+      const ctx = document.getElementById('chart-dispute-comparison');
+      if (!ctx) return;
+
+      comparisonChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['書面作成コスト', '申立準備期間', '法的ロジック完成度', '提訴・申立の頻度'],
+          datasets: [
+            {
+              label: '従来の労働者 (弁護士未依頼時)',
+              data: [15, 20, 25, 20],
+              backgroundColor: 'rgba(148, 163, 184, 0.7)',
+              borderColor: 'rgba(148, 163, 184, 1)',
+              borderWidth: 1
+            },
+            {
+              label: 'AI武装労働者 (AI活用時)',
+              data: [95, 90, 85, 88],
+              backgroundColor: 'rgba(225, 29, 72, 0.8)',
+              borderColor: 'rgba(225, 29, 72, 1)',
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: {
+                callback: function(value) { return value + '点'; },
+                font: { size: 11 }
+              }
+            },
+            x: {
+              ticks: {
+                font: { size: 11 }
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { font: { size: 11 } }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ': ' + context.raw + ' / 100';
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Interactive Self-Audit Score Calculation
+    function calculateAuditScore() {
+      const checkboxes = document.querySelectorAll('.audit-check');
+      let totalScore = 0;
+
+      checkboxes.forEach(cb => {
+        if (cb.checked) {
+          totalScore += parseInt(cb.getAttribute('data-score') || '0', 10);
+        }
+      });
+
+      const scoreEl = document.getElementById('audit-score');
+      const rankEl = document.getElementById('audit-rank');
+      const adviceEl = document.getElementById('audit-advice');
+
+      scoreEl.textContent = totalScore;
+
+      if (totalScore >= 85) {
+        rankEl.textContent = '鉄壁防衛（極めて安全）';
+        rankEl.className = 'text-xs font-bold px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 inline-block';
+        adviceEl.textContent = '素晴らしい体制です。現在の時系列ログと契約規程を維持してください。';
+      } else if (totalScore >= 55) {
+        rankEl.textContent = '要警戒（部分的に穴あり）';
+        rankEl.className = 'text-xs font-bold px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 inline-block';
+        adviceEl.textContent = '日報や面談ログの即日メール共有の習慣化と、就業規則の再チェックを推奨します。';
+      } else {
+        rankEl.textContent = '危険（AI標的リスク高）';
+        rankEl.className = 'text-xs font-bold px-2.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 inline-block';
+        adviceEl.textContent = '早急に就業規則の点検と、日々の指導の客観的文字化を開始してください。';
+      }
+    }
+
+    // On Load Initialization
+    document.addEventListener('DOMContentLoaded', () => {
+      initComparisonChart();
+      calculateAuditScore();
+    });
+  </script>
+</body>
+</html>
